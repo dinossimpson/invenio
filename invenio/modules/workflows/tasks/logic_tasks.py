@@ -74,20 +74,11 @@ def simple_for(initA, endA, incrementA, variable_name=None):
         if (increment > 0 and eng.extra_data["Iterators"][step] > end) or \
                 (increment < 0 and eng.extra_data["Iterators"][step] < end):
             finish = True
-        from invenio.legacy.bibsched.bibtask import write_message
-        write_message(str(eng.extra_data["Iterators"][step]) + " / " + str(end))
-        write_message(str(finish))
         if not finish:
             if variable_name is not None:
                 eng.extra_data["Iterators"][variable_name] = eng.extra_data["Iterators"][step]
-            write_message("Increment")
-            write_message(increment)
-            write_message(eng.extra_data["Iterators"][step])
             eng.extra_data["Iterators"][step] += increment
-            write_message("toto")
-            write_message(eng.extra_data["Iterators"][step])
         else:
-            write_message("carotte")
             del eng.extra_data["Iterators"][step]
             coordonatex = len(eng.getCurrTaskId()) - 1
             coordonatey = eng.getCurrTaskId()[coordonatex]
@@ -110,3 +101,12 @@ def get_obj_data(obj, eng):
     eng.log.info("last task name: get_obj_data")
     return obj.data
 
+
+def execute_if(fun, *args):
+    def _execute_if(obj, eng):
+        for rule in args:
+            res = rule(obj, eng)
+            if not res:
+                eng.jumpCallForward(1)
+        fun(obj, eng)
+    return _execute_if
