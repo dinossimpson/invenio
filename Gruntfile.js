@@ -90,7 +90,8 @@ module.exports = function (grunt) {
                      ,'uploadify/jquery.uploadify.min.js'
                      ,'json2/json2.js'
                      ,'datatables-colvis/media/js/ColVis.js'
-                     ,'DataTables-Plugins/integration/bootstrap/3/dataTables.bootstrap.js'],
+                     ,'DataTables-Plugins/integration/bootstrap/3/dataTables.bootstrap.js'
+                     ,'DataTables-Plugins/api/fnReloadAjax.js'],
                 dest: '<%= grunt.option(\'target\') %>/js/'
             },
 
@@ -374,7 +375,8 @@ module.exports = function (grunt) {
                      ,'prism.js'
                      ,'swfobject.js'
                      ,'ColVis.js'
-                     ,'dataTables.bootstrap.js']
+                     ,'dataTables.bootstrap.js'
+                     ,'fnReloadAjax.js']
             },
 
             MathJax: {
