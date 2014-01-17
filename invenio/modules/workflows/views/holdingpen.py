@@ -179,6 +179,7 @@ def load_table(version_showing):
     VERSION_SHOWING = []
     req = request.get_json()
 
+    rebuild_containers = False
     if req:
         if req.get('final', None):
             VERSION_SHOWING.append(CFG_OBJECT_VERSION.FINAL)
@@ -186,9 +187,17 @@ def load_table(version_showing):
             VERSION_SHOWING.append(CFG_OBJECT_VERSION.HALTED)
         if req.get('running', None):
             VERSION_SHOWING.append(CFG_OBJECT_VERSION.RUNNING)
+        rebuild_containers = True
+        current_app.config['VERSION_SHOWING'] = VERSION_SHOWING
+        print "SET IT IN CONFIG as:", current_app.config['VERSION_SHOWING']
     else:
-        VERSION_SHOWING = [CFG_OBJECT_VERSION.HALTED]
-    current_app.config['VERSION_SHOWING'] = VERSION_SHOWING
+        try:
+            VERSION_SHOWING = current_app.config['VERSION_SHOWING']
+            print "GOT IT HERE as:", VERSION_SHOWING
+        except:
+            rebuild_containers = True
+            print "HAD TO RESET"
+            VERSION_SHOWING = [CFG_OBJECT_VERSION.HALTED]
 
     # sSearch will be used for searching later
     a_search = request.args.get('sSearch')
@@ -206,7 +215,12 @@ def load_table(version_showing):
         i_display_length = current_app.config['iDisplayLength']
         sEcho = current_app.config['sEcho'] + 1
 
-    bwolist = create_hp_containers(sSearch=a_search, version_showing=VERSION_SHOWING)
+    if a_search or rebuild_containers:
+        # FIXME: Temp measure until Redis is hooked up
+        print 'rebuilding containers'
+        print 'with version:', VERSION_SHOWING
+        bwolist = create_hp_containers(sSearch=a_search, version_showing=VERSION_SHOWING)
+
     if 'iSortCol_0' in current_app.config:
         i_sortcol_0 = int(i_sortcol_0)
         if i_sortcol_0 != current_app.config['iSortCol_0'] \
@@ -222,8 +236,16 @@ def load_table(version_showing):
     table_data = {
         "aaData": []
     }
-    table_data['iTotalRecords'] = len(bwolist)
-    table_data['iTotalDisplayRecords'] = len(bwolist)
+
+    try:
+        table_data['iTotalRecords'] = len(bwolist)
+        table_data['iTotalDisplayRecords'] = len(bwolist)
+    except:
+        bwolist = create_hp_containers(version_showing=VERSION_SHOWING)
+        table_data['iTotalRecords'] = len(bwolist)
+        table_data['iTotalDisplayRecords'] = len(bwolist)
+
+        
     #This will be simplified once Redis is utilized.
     
     rendered_rows = []

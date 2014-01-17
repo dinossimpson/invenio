@@ -68,7 +68,6 @@ function init_datatable(){
                     $(this).addClass('maintablerowhover');
                 });
             });
-
             $('table#maintable td').bind('mouseleave', function () {
                 $(this).parent().children().each(function() {
                     $(this).removeClass('maintablerowhover');
@@ -91,15 +90,15 @@ $('#batch_btn').on('click', function() {
     }
 });
 
-$('#refresh_button').on('click', function() {
-    jQuery.ajax({
-        url: url.refresh,
-        success: function(json){
+// $('#refresh_button').on('click', function() {
+//     jQuery.ajax({
+//         url: url.refresh,
+//         success: function(json){
             
-        }
-    });
-    oTable.fnDraw(false);
-});
+//         }
+//     });
+//     oTable.fnDraw(false);
+// });
 
 // DataTables row selection functions
 //***********************************
@@ -348,7 +347,8 @@ $('.task-btn').on('click', function(){
     else{
         closeTag($('#'+widget_name));
         oTable.fnFilter( '^$', 4, true, false );
-        $('#refresh_button').click();
+        // $('#refresh_button').click();
+        oTable.fnDraw(false);
     }   
     // requestNewObjects();
 });
@@ -410,7 +410,7 @@ function requestNewObjects(){
         contentType: 'application/json;charset=UTF-8',
         traditional: true,
         success: function(result) {
-            $('#refresh_button').click();
+            oTable.fnDraw(false);
         }
     });
 }
