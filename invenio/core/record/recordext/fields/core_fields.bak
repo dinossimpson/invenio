@@ -46,33 +46,6 @@ _id:
         See also: .recid
         """
 
-modification_date, version_id:
-    creator:
-        @legacy(("005", ""),)
-        marc, "005", datetime.datetime(*(time.strptime(value, '%Y%m%d%H%M%S.0')[0:6]))
-    checker:
-        check_field_existence(1)
-        check_field_type('datetime.datetime')
-    producer:
-        json_for_marc, {"005": "self.get('version_id').strftime('%Y%m%d%H%M%S.0')"}
-        json_for_dc, {"dc:date": "self.get('version_id').strftime('%Y-%m-%dT%H:%M:%SZ')"}
-    documentation:
-        """Modification date"""
-
-_modification_date, version_id:
-    calculated:
-        @only_if((not 'modification_date' in self, ))
-        invenio.core.record.models.Record.query.get(self['recid']).modification_date
-    producer:
-        json_for_marc, {"005": "self.get('version_id').strftime('%Y%m%d%H%M%S.0')"}
-        json_for_dc, {"dc:date": "self.get('version_id').strftime('%Y-%m-%dT%H:%M:%SZ')"}
-    documentation:
-        """
-        Modification date
-
-        See also: .modification_date
-        """
-
 creation_date:
     derived:
         @parse_first(('recid', ))
