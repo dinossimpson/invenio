@@ -2,6 +2,14 @@ span.glyphicon-link {
     font-size: 1.2em;
 }
 
+#slide-down-menu{
+    background-color:black;
+    opacity: 75%;
+    width:400px;
+    height:100px;
+    margin:0 auto; 
+}
+
 .mini-approval-btn{
     text-decoration: none;
     color: #fff;

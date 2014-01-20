@@ -286,7 +286,11 @@ function selectRow(row, id, e, oSettings) {
         selectRange(row);
     }
     else{
-        var widget_name = selectCellByTitle(row, 'Actions').innerText;    
+        // var widget_name = selectCellByTitle(row, 'Actions').innerHTML;  
+        // console.log(widget_name);
+        // console.log(Object.keys(row));
+        console.log(oTable.fnGetPosition(row));
+        console.log(oSettings.aoData[oTable.fnGetPosition(row)]._aData[selectCellByTitle(row, 'Actions')]);
         widget_name = widget_name.substring(0, widget_name.length-4);
         
         if($.inArray(id, rowList) <= -1){

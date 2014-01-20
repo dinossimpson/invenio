@@ -59,7 +59,14 @@ function approveAll() {
     var acceptBtn = '<button type="button" class="btn btn-success">'+
                     '<a id="accept-multi" href="javascript:void(0)" class="mini-approval-btn">'+
                     'Accept</a></button>';
-    $('#multi-approval').append(rejectBtn, acceptBtn);
+
+    $('body').prepend(
+        '<div id="slide-down-menu">'+
+        rejectBtn+acceptBtn+
+        '</div>'
+    );
+
+    // $('#multi-approval').append(rejectBtn, acceptBtn);
     $('#accept-multi').click( function(){
         for(i=0; i<recordsToApprove.length; i++){
             jQuery.ajax({
