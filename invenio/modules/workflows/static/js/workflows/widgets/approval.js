@@ -20,7 +20,9 @@
 var bwoid;
 var datapreview = "hd";
 var number_of_objs = $(".theform").length;
+console.log(number_of_objs);
 var current_number = number_of_objs-1;
+console.log(current_number);
 url = new Object();
 
 function init_urls_approval(url_){
@@ -132,14 +134,17 @@ $(document).ready(function(){
     $('.theform #submitButton').click( function(event) {
         event.preventDefault();
 
-        console.log($(this)[0].form.parentElement);
-        var form_id = $(this)[0].form.parentElement.previousElementSibling.id;
-        id_number = form_id.substring(form_id.indexOf("d")+1);
-        btn_div_id = "decision-btns"+id_number;
-        hr_id = "hr"+id_number;
+        var form_name = $(this)[0].form.name;
+        var bwo_id = form_name.substring(form_name.indexOf('bwobject_id')+12);
+        var form_id = $(this)[0].form.id.substring(4);
+
+        // id_number = form_id.substring(form_id.indexOf("d")+1);
+        btn_div_id = "decision-btns"+form_id;
+        hr_id = "hr"+form_id;
         
         formdata = $(this)[0].value;
         formurl = event.currentTarget.parentElement.name;
+        console.log(formurl);
         $.ajax({
             type: "POST",
             url: formurl,

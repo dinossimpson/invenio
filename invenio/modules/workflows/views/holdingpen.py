@@ -430,15 +430,15 @@ def show_widget(objectid):
 
 @blueprint.route('/resolve', methods=['GET', 'POST'])
 @login_required
-@wash_arguments({'objectid': (unicode, '-1'),
+@wash_arguments({'bwobject_id': (unicode, '-1'),
                  'widget': (unicode, 'default')})
-def resolve_widget(objectid, widget):
+def resolve_widget(bwobject_id, widget):
     """
     Resolves the action taken in a widget.
     Calls the run_widget function of the specific widget.
     """
     widget_form = widgets[widget]
-    widget_form().run_widget(objectid, request)
+    widget_form().run_widget(bwobject_id, request)
     return "Done"
 
 

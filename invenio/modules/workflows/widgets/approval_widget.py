@@ -62,6 +62,7 @@ class approval_widget(Form):
         from ..models import BibWorkflowObject
 
         bwobject = BibWorkflowObject.query.get(bwobject_id)
+        print 'bwobject_id:', bwobject_id
 
         if request.form['decision'] == 'Accept':
             bwobject.remove_widget()
