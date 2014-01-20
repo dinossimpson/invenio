@@ -80,16 +80,6 @@ function init_datatable(){
     return oTable;
 }
 
-$('#batch_btn').on('click', function() {
-    if (rowList.length >= 1){
-        var rowList_out = JSON.stringify(rowList);
-        console.log(rowList_out);
-        window.location = url.batch_widget + "?bwolist=" + rowList_out;
-        $(this).prop("disabled", true);
-        return false;
-    }
-});
-
 // $('#refresh_button').on('click', function() {
 //     jQuery.ajax({
 //         url: url.refresh,
@@ -264,19 +254,21 @@ window.addEventListener("keydown", function(e){
 });
 
 function selectCellByTitle(row, title){
-    console.log(row);
-    console.log(title);
     for(var i=0; i<oSettings.aoHeader[0].length; i++){
-        console.log(oSettings.aoHeader[0]);
         var trimmed_title = $.trim(oSettings.aoHeader[0][i].cell.innerText);
-        console.log(trimmed_title);
         if(trimmed_title === title){
-            console.log("returning");
-            console.log(i);
-            console.log($(row).children()[i - 1]);
             return $(row).children()[i - 1];
         }
     }
+}
+
+function getCellIndex(row, title){
+    for(var i=0; i<oSettings.aoHeader[0].length; i++){
+        var trimmed_title = $.trim(oSettings.aoHeader[0][i].cell.innerText);
+        if(trimmed_title === title){
+            return i
+        }
+    }   
 }
 
 function selectRow(row, id, e, oSettings) {
@@ -286,13 +278,9 @@ function selectRow(row, id, e, oSettings) {
         selectRange(row);
     }
     else{
-        // var widget_name = selectCellByTitle(row, 'Actions').innerHTML;  
-        // console.log(widget_name);
-        // console.log(Object.keys(row));
-        console.log(oTable.fnGetPosition(row));
-        console.log(oSettings.aoData[oTable.fnGetPosition(row)]._aData[selectCellByTitle(row, 'Actions')]);
-        widget_name = widget_name.substring(0, widget_name.length-4);
-        
+        if(selectCellByTitle(row, 'Actions').childNodes[0].id === 'submitButtonMini'){
+            widget_name = 'Approve Record';
+        }
         if($.inArray(id, rowList) <= -1){
             // Select row
             rowList.push(id);
@@ -302,6 +290,7 @@ function selectRow(row, id, e, oSettings) {
             if (selectCellByTitle(row, 'Actions').innerText != 'N/A'){                    
                 if(widget_name === 'Approve Record'){
                     recordsToApprove.push(id);
+                    console.log(recordsToApprove);
                 }
             }
 
@@ -426,6 +415,10 @@ function isInt(n) {
 function emptyLists(){
     rowList = [];
     rowIndexList = [];
+}
+
+$.fn.exists = function () {
+    return this.length !== 0;
 }
 
 function bootstrap_alert(message) {

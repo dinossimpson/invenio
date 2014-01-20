@@ -59,12 +59,23 @@ function approveAll() {
     var acceptBtn = '<button type="button" class="btn btn-success">'+
                     '<a id="accept-multi" href="javascript:void(0)" class="mini-approval-btn">'+
                     'Accept</a></button>';
+    if($('#batch-btn').exists()){
 
-    $('body').prepend(
-        '<div id="slide-down-menu">'+
-        rejectBtn+acceptBtn+
-        '</div>'
-    );
+    }
+    else{
+        var batch_btn = '<li><a id="batch-btn" style="cursor:pointer">Multiple Approval</a></li>';
+        $('#navbar-right').append(batch_btn);
+        $('#batch-btn').on('click', function() {
+        console.log("HERE");
+        if (rowList.length >= 1){
+            var rowList_out = JSON.stringify(rowList);
+            console.log(rowList_out);
+            window.location = url.batch_widget + "?bwolist=" + rowList_out;
+            $(this).prop("disabled", true);
+            return false;
+        }
+    });
+    }
 
     // $('#multi-approval').append(rejectBtn, acceptBtn);
     $('#accept-multi').click( function(){
@@ -121,6 +132,7 @@ $(document).ready(function(){
     $('.theform #submitButton').click( function(event) {
         event.preventDefault();
 
+        console.log($(this)[0].form.parentElement);
         var form_id = $(this)[0].form.parentElement.previousElementSibling.id;
         id_number = form_id.substring(form_id.indexOf("d")+1);
         btn_div_id = "decision-btns"+id_number;
@@ -153,8 +165,8 @@ $(document).ready(function(){
     window.setDataPreview = function(dp, id){
         bwoid = id;
         datapreview = dp;
-        console.log(url_preview);
-        data_preview(url_preview, bwoid, datapreview);
+        console.log(url.preview);
+        data_preview(url.preview, bwoid, datapreview);
     }
 
     $('#submitButtonMini').click( function (event){

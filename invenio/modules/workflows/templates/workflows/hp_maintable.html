@@ -28,6 +28,7 @@
             url.widget = "{{ url_for('holdingpen.show_widget') }}";
             url.details = "{{ url_for('holdingpen.details')|safe }}";
             url.batch_widget = "{{ url_for('holdingpen.batch_widget') }}";
+            url.preview = "{{ url_for('holdingpen.entry_data_preview') }}";
 
             init_urls(url);
             init_urls_approval(url);
@@ -82,7 +83,7 @@
                 </ul>
             </li>
         </ul>
-        <ul class="nav navbar-nav pull-right">
+        <ul id="navbar-right" class="nav navbar-nav pull-right">
         </ul>
       </div>
     </nav>
