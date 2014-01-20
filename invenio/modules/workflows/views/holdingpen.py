@@ -177,14 +177,14 @@ def load_table(version_showing):
     """
     from ..containers import create_hp_containers
     VERSION_SHOWING = []
-    version_showing = request.get_json()
+    req = request.get_json()
 
-    if version_showing:
-        if version_showing['final'] == True:
+    if req:
+        if req.get('final', None):
             VERSION_SHOWING.append(CFG_OBJECT_VERSION.FINAL)
-        if version_showing['halted'] == True:
+        if req.get('halted', None):
             VERSION_SHOWING.append(CFG_OBJECT_VERSION.HALTED)
-        if version_showing['running'] == True:
+        if req.get('running', None):
             VERSION_SHOWING.append(CFG_OBJECT_VERSION.RUNNING)
     else:
         VERSION_SHOWING = [CFG_OBJECT_VERSION.HALTED]
