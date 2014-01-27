@@ -58,10 +58,13 @@ function init_datatable(){
                         {'sWidth': "15%", 'aTargets': [4]}],
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
             var id = aData[0];
-            rememberSelected(nRow, id);
+            rememberSelected(nRow);
             oSettings = oTable.fnSettings();
+            nRow.row_id = id;
+            // console.log(nRow.cells[0].firstChild);
+            nRow.checkbox = nRow.cells[0].firstChild;
             nRow.addEventListener("click", function(e) {
-                selectRow(nRow, id, e, oSettings);
+                selectRow(nRow, e, oSettings);
             });
         },
         "fnDrawCallback": function(){
@@ -103,7 +106,8 @@ function hoverRow(row) {
 }
 
 function unhoverRow(row) {
-    if($.inArray(selectCellByTitle(row, 'Id').innerText, rowList) > -1){
+    console.log(row.row_id);
+    if($.inArray(row.row_id, rowList) > -1){
         row.style.background = "#ffa";
     }
     else{
@@ -128,17 +132,21 @@ function selectRange(row){
     var toPos = oTable.fnGetPosition(row) + oSettings._iDisplayStart;
     var fromPos = rowIndexList[rowIndexList.length-1];
     var i;
+    var current_row = null;
 
     if (toPos > fromPos){
         for (i=fromPos; i<=toPos; i++){
             j = i % 10;
             if($.inArray(i, rowIndexList) <= -1){
-                if (selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[j]].nTr, 'Actions').innerText != 'N/A'){
+                current_row = oSettings.aoData[oSettings.aiDisplay[j]].nTr;
+                if (selectCellByTitle(current_row, 'Actions').innerText != 'N/A'){
                     rowIndexList.push(i);
-                    rowList.push(selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[j]].nTr, 'Id').innerText);
-                    oSettings.aoData[oSettings.aiDisplay[j]].nTr.style.background = "#ffa";
-                    checkbox = selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[j]].nTr, "").childNodes[1];
-                    checkbox.checked = true;
+                    console.log(current_row.row_id);
+                    rowList.push(current_row.row_id);
+                    current_row.style.background = "#ffa";
+                    // checkbox = selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[j]].nTr, "").childNodes[1];
+                    console.log("EDW");
+                    current_row.checkbox.checked = true;
                 }
             }
         }
@@ -147,13 +155,12 @@ function selectRange(row){
         for (i=fromPos; i>=toPos; i--){
             j = i % 10;
             if($.inArray(i, rowIndexList) <= -1){
-                console.log(oSettings.aoData[oSettings.aiDisplay[j]].nTr);
-                if (selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[j]].nTr, 'Actions').innerText != 'N/A'){
+                current_row = oSettings.aoData[oSettings.aiDisplay[j]].nTr
+                if (selectCellByTitle(current_row, 'Actions').innerText != 'N/A'){
                     rowIndexList.push(i);
-                    rowList.push(selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[j]].nTr, 'Id').innerText);
-                    oSettings.aoData[oSettings.aiDisplay[j]].nTr.style.background = "#ffa";
-                    checkbox = selectCellByTitle(oSettings.aiDisplay[j].nTr, "").childNodes[1];
-                    checkbox.checked = false;
+                    rowList.push(current_row.row_id);
+                    current_row.style.background = "#ffa";
+                    current_row.checkbox.checked = false;
                 }
             }
         }
@@ -177,9 +184,9 @@ function selectAll(){
     }
 }
 
-function rememberSelected(row, id) {
+function rememberSelected(row) {
     selectedRow = row;
-    if($.inArray(id, rowList) > -1){
+    if($.inArray(row.row_id, rowList) > -1){
         selectedRow.style.background = "#ffa";
         //selectedRow.cells[0].childNodes[1].checked = true;
     }
@@ -187,6 +194,7 @@ function rememberSelected(row, id) {
 
 window.addEventListener("keydown", function(e){
     var currentRowIndex;
+    var current_row;
     if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
         e.preventDefault();
     }
@@ -194,11 +202,12 @@ window.addEventListener("keydown", function(e){
         if (e.shiftKey === true){
             currentRowIndex = rowIndexList[rowIndexList.length-1];
             if (currentRowIndex < 9){
-                rowToAdd = currentRowIndex + 1;
-                if($.inArray(selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[rowToAdd]].nTr, 'Id').innerText, rowList) <= -1){
-                    rowIndexList.push(rowToAdd);
-                    rowList.push(selectCellByTitle(oSettings.aoData[oSettings.aiDisplay[rowToAdd]].nTr, 'Id').innerText);
-                    oSettings.aoData[oSettings.aiDisplay[rowToAdd]].nTr.style.background = "#ffa";
+                row_index = currentRowIndex + 1;
+                current_row = oSettings.aoData[oSettings.aiDisplay[row_index]].nTr;
+                if($.inArray(current_row.row_id, rowList) <= -1){
+                    rowIndexList.push(row_index);
+                    rowList.push(current_row.row_id);
+                    current_row.style.background = "#ffa";
                 }
             }
         }
@@ -273,8 +282,8 @@ function getCellIndex(row, title){
     }   
 }
 
-function selectRow(row, id, e, oSettings) {
-    console.log(id);
+function selectRow(row, e, oSettings) {
+    console.log(row.row_id);
     selectedRow = row;
     if( e.shiftKey === true ){
         selectRange(row);
@@ -283,33 +292,32 @@ function selectRow(row, id, e, oSettings) {
         if(selectCellByTitle(row, 'Actions').childNodes[0].id === 'submitButtonMini'){
             widget_name = 'Approve Record';
         }
-        if($.inArray(id, rowList) <= -1){
+        if($.inArray(row.row_id, rowList) <= -1){
             // Select row
-            rowList.push(id);
+            rowList.push(row.row_id);
             rowIndexList.push(row._DT_RowIndex+oSettings._iDisplayStart);
-            selectedRow.style.background = "#ffa";
+            row.style.background = "#ffa";
 
             if (selectCellByTitle(row, 'Actions').innerText != 'N/A'){                    
                 if(widget_name === 'Approve Record'){
-                    recordsToApprove.push(id);
+                    recordsToApprove.push(row.row_id);
                     console.log(recordsToApprove);
                 }
-            }
-
-            checkbox = $(selectedRow).find(".hp-check");
-            checkbox.attr('checked', true);
-        }
+            }   
+            row.checkbox.checked = true;
+        }   
         else{
-            // De-Select row??
-            rowList.splice(rowList.indexOf(id), 1);
+            // De-Select row?? - Yes
+            rowList.splice(rowList.indexOf(row.row_id), 1);
             rowIndexList.splice(rowIndexList.indexOf(row._DT_RowIndex+oSettings._iDisplayStart), 1);
-            selectedRow.style.background = "white";
+            row.style.background = "white";
             
             if(widget_name === 'Approve Record'){
-                recordsToApprove.splice(recordsToApprove.indexOf(id), 1);
+                recordsToApprove.splice(recordsToApprove.indexOf(row.row_id), 1);
             }
-            checkbox = $(selectedRow).find(".hp-check");
-            checkbox.attr('checked', false);
+            // checkbox = $(selectedRow).find(".hp-check");
+            // checkbox.attr('checked', false);
+            row.checkbox.checked = false;
         }
     }
     checkRecordsToApprove();
