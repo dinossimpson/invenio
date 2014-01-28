@@ -81,6 +81,7 @@ function init_datatable(){
         }
     };
     oTable = $('#maintable').dataTable(oSettings);
+    $('#tagsinput').tagsinput();
     $('#version-halted').click();
     return oTable;
 }
@@ -342,18 +343,17 @@ $(document).keyup(function(e){
 $('.task-btn').on('click', function(){
     if($.inArray($(this)[0].name, tagList) <= -1){
         var widget_name = $(this)[0].name;
-        $('#tag-area').append('<div class="alert alert-info tag-alert col-md-1">'+widget_name+'<a id="'+widget_name+'" class="close-btn pull-right" data-dismiss="alert" name='+widget_name+' onclick="closeTag(this.parentElement)">&times;</a></div>');
+        // $('#tag-area').append('<div class="alert alert-info tag-alert col-md-1">'+widget_name+'<a id="'+widget_name+'" class="close-btn pull-right" data-dismiss="alert" name='+widget_name+' onclick="closeTag(this.parentElement)">&times;</a></div>');
+        $('#tagsinput').tagsinput('add', $(this)[0].name);
         tagList.push($(this)[0].name);
-        oTable.fnFilter($(this)[0].name);
-
+        // oTable.fnFilter($(this)[0].name);
+        requestNewObjects();
     }
     else{
-        closeTag($('#'+widget_name));
+        closeTag(widget_name);
         oTable.fnFilter( '^$', 4, true, false );
-        // $('#refresh_button').click();
         oTable.fnDraw(false);
     }   
-    // requestNewObjects();
 });
 
 $('.version-selection').on('click', function(){
@@ -362,24 +362,31 @@ $('.version-selection').on('click', function(){
 
     if($.inArray($(this)[0].name, tagList) <= -1){
         console.log("TAG NOT IN TAGLIST");
-        $('#tag-area').append('<div id="tag-version-'+$(this)[0].name+'" name="'+$(this)[0].name+'" class="alert alert-info tag-alert col-md-1">'+$(this)[0].name+'<a class="close-btn pull-right" data-dismiss="alert" onclick="closeTag(this.parentElement)">&times;</a></div>');
+        // $('#tag-area').append('<div id="tag-version-'+$(this)[0].name+'" name="'+$(this)[0].name+'" class="alert alert-info tag-alert col-md-1">'+$(this)[0].name+'<a class="close-btn pull-right" data-dismiss="alert" onclick="closeTag(this.parentElement)">&times;</a></div>');
+        $('#tagsinput').tagsinput('add', $(this)[0].name);
         tagList.push($(this)[0].name);
+        requestNewObjects();
     } 
     else{
-        closeTag($('#tag-version-'+$(this)[0].name)[0]);
+        console.log("TAG IS IN TAGLIST");
+        closeTag($(this)[0].name);
+        // $('#tagsinput').tagsinput('remove', $(this)[0].name);
     }    
+});
+
+$("#tagsinput").on('itemRemoved', function(event) {
+    tagList.splice(tagList.indexOf(event.item), 1);
+    console.log('item removed : '+event.item);
     requestNewObjects();
 });
 
-function closeTag(obj){
-    // console.log(tagList);
-    // console.log(obj);
-    // console.log(obj.name);
-    var tag_name = obj.innerText.substr(0,obj.innerText.length-1);
+function closeTag(tag_name){
+//     // console.log(tagList);
+//     // console.log(obj.name);
     console.log(tag_name);
-    tagList.splice(tagList.indexOf(obj.name), 1);
-    
-    obj.remove();
+    tagList.splice(tagList.indexOf(tag_name), 1);
+    $('#tagsinput').tagsinput('remove', tag_name);
+    console.log($("#tagsinput").tagsinput('items'));
     requestNewObjects();
 };
 //***********************************
