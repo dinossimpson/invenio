@@ -380,6 +380,21 @@ $("#tagsinput").on('itemRemoved', function(event) {
     requestNewObjects();
 });
 
+$("#tagsinput").on('itemAdded', function(event){
+    if(event.item != 'Halted' && event.item != 'Final' && event.item != 'Running'){
+        oTable.fnFilter(event.item);
+    }
+    else if(event.item === 'Halted'){
+        $('#version-halted').click();
+    }
+    else if(event.item === 'Final'){
+        $('#version-final').click();   
+    }
+    else{
+        $('version-running').click();
+    }
+});
+
 function closeTag(tag_name){
 //     // console.log(tagList);
 //     // console.log(obj.name);
