@@ -30,10 +30,11 @@
             url.details = "{{ url_for('holdingpen.details')|safe }}";
             url.batch_widget = "{{ url_for('holdingpen.batch_widget') }}";
             url.preview = "{{ url_for('holdingpen.entry_data_preview') }}";
+            version_showing = "{{version_showing}}"
 
             init_urls(url);
             init_urls_approval(url);
-            oTable = init_datatable();
+            oTable = init_datatable(version_showing);
 
             // setInterval(function(){
             //     oTable.fnDraw(false);

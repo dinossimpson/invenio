@@ -38,7 +38,7 @@ function init_urls(url_) {
     url.details = url_.details;
 }
 
-function init_datatable(){
+function init_datatable(version_showing){
     oSettings = {
         "sDom": 'lf<"clear">rtip',
         "bJQueryUI": true,
@@ -81,8 +81,10 @@ function init_datatable(){
         }
     };
     oTable = $('#maintable').dataTable(oSettings);
-    $('#tagsinput').tagsinput();
-    $('#version-halted').click();
+    // $('#tagsinput').tagsinput();
+    console.log(version_showing);
+    initialize_versions(version_showing);
+    // $('#version-halted').click();
     return oTable;
 }
 
@@ -408,6 +410,40 @@ function closeTag(tag_name){
 
 //Utility functions
 //***********************************
+function initialize_versions(version_showing){
+    if(version_showing){
+        for(var i=0; i<version_showing.length; i++){
+            if(version_showing[i] == 1){
+                if ($.inArray('Final', tagList) <= -1){
+                    tagList.push('Final');  
+                } 
+                $('#version-final').click();
+            }
+            else if(version_showing[i] == 2){
+                if ($.inArray('Halted', tagList) <= -1){
+                    tagList.push('Halted');
+                } 
+                $('#version-halted').click();  
+            }
+            else if(version_showing[i] == 3){
+                if ($.inArray('Halted', tagList) <= -1){
+                    tagList.push('Running');
+                } 
+                $('#version-running').click();  
+            }
+        }
+    }
+
+    if ($.inArray('Final', tagList) > -1) $('#tagsinput').tagsinput('add', 'Final');
+    if ($.inArray('Halted', tagList) > -1){
+        // $('#tagsinput').tagsinput('add', 'Halted');
+        $('#version-halted').click();
+        console.log('patisa to halted');
+    } 
+    if ($.inArray('Running', tagList) > -1) $('#tagsinput').tagsinput('add', 'Running');    
+    console.log(tagList);
+}
+
 function fnGetSelected( oTableLocal ){
     var aReturn = [];
     var aTrs = oTableLocal.fnGetNodes();
